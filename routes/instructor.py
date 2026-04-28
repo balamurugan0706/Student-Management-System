@@ -37,7 +37,8 @@ def dashboard():
                 "as": "course_detail"
             }
         },
-        {"$unwind": "$course_detail"}
+        {"$unwind": "$course_detail"},
+        {"$sort": {"student_id": 1}}
     ]
     
     student_records = list(mongo.db.grades.aggregate(pipeline))

@@ -4,6 +4,7 @@
 {% block header %}Course Repository{% endblock %}
 
 {% block content %}
+{% include "components/delete_modal.html" %}
 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
     <!-- Add Course Form -->
     <div class="glass animate-fade-in" style="padding: 2rem; height: fit-content;">
@@ -77,11 +78,14 @@
                     <td style="padding: 1rem;">{{ course.course_id }}</td>
                     <td style="padding: 1rem;">{{ course.course_name }}</td>
                     <td style="padding: 1rem;">{{ course.credits }}</td>
-                    <td style="padding: 1rem; display: flex; gap: 5px;">
-                        <a href="{{ url_for('admin_bp.edit_course', course_id=course.course_id) }}" class="btn" style="padding: 5px 10px; background: rgba(99, 102, 241, 0.1); color: var(--primary-color);"><i class="fas fa-edit"></i></a>
-                        <form action="{{ url_for('admin_bp.delete_course', course_id=course.course_id) }}" method="POST" onsubmit="return confirm('Delete this course and all enrollments?')">
-                            <button type="submit" class="btn" style="padding: 5px 10px; background: rgba(239, 68, 68, 0.1); color: var(--error); border: none; cursor: pointer;"><i class="fas fa-trash"></i></button>
-                        </form>
+                    <td style="padding: 1rem; display: flex; gap: 10px;">
+                        <a href="{{ url_for('admin_bp.edit_course', course_id=course.course_id) }}" class="btn" style="padding: 8px 12px; background: rgba(129, 140, 248, 0.1); color: var(--primary);"><i class="fas fa-edit"></i></a>
+                        <button type="button" class="btn delete-course-btn" 
+                                style="padding: 8px 12px; background: rgba(248, 113, 113, 0.1); color: var(--error); border: none; cursor: pointer;" 
+                                data-course-id="{{ course.course_id }}" 
+                                data-course-name="{{ course.course_name }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -89,4 +93,22 @@
         </table>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.delete-course-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var courseId = this.getAttribute('data-course-id');
+            var courseName = this.getAttribute('data-course-name');
+            var deleteUrl = '/admin/courses/delete/' + encodeURIComponent(courseId);
+            var rowElement = this.closest('tr');
+            
+            openDeleteModal(
+                deleteUrl, 
+                'Delete Course', 
+                'Are you sure you want to delete "' + courseName + '"? This will also remove all student enrollments and grades associated with this course.',
+                rowElement
+            );
+        });
+    });
+</script>
 {% endblock %}

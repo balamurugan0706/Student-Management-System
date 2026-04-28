@@ -96,7 +96,13 @@
             var userId = this.getAttribute('data-user-id');
             var deleteUrl = '/admin/users/delete/' + encodeURIComponent(userId);
             var rowElement = this.closest('tr');
-            openDeleteModal(deleteUrl, rowElement);
+            
+            openDeleteModal(
+                deleteUrl, 
+                'Delete Account', 
+                'Are you sure you want to delete user "' + userId + '"? All academic records, attendance, and profile data for this user will be permanently removed.',
+                rowElement
+            );
         });
     });
 </script>

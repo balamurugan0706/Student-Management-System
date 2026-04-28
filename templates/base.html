@@ -7,7 +7,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body style="background: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden;">
+    <!-- Loading Overlay -->
+    <div id="loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 10000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s;">
+        <div class="loader-content" style="text-align: center;">
+            <div style="width: 60px; height: 60px; border: 4px solid rgba(129, 140, 248, 0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1.5rem;"></div>
+            <p style="color: var(--text-dim); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase;">EduStream</p>
+        </div>
+    </div>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div id="toast-container">
@@ -28,8 +38,11 @@
     <div class="app-container">
         {% if session.get('user_id') %}
         <nav class="sidebar glass">
-            <div class="logo" style="margin-bottom: 3rem; font-size: 1.5rem; font-weight: 800; color: var(--primary);">
-                <i class="fas fa-graduation-cap"></i> EduStream
+            <div class="logo" style="margin-bottom: 3.5rem; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; box-shadow: 0 4px 12px var(--primary-glow);">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <span style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">EduStream</span>
             </div>
             
             <ul style="list-style: none;">
@@ -96,10 +109,33 @@
     </div>
 
     <script>
+        // Page loader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+        });
+
+        // Add loading state to forms on submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    btn.style.opacity = '0.7';
+                    btn.style.pointerEvents = 'none';
+                }
+            });
+        });
+
         // Remove toasts after 5 seconds
         setTimeout(() => {
             const toasts = document.querySelectorAll('.toast');
-            toasts.forEach(t => t.style.display = 'none');
+            toasts.forEach(t => {
+                t.style.transform = 'translateX(120%)';
+                t.style.transition = 'transform 0.5s ease-in';
+                setTimeout(() => t.remove(), 500);
+            });
         }, 5000);
     </script>
 </body>

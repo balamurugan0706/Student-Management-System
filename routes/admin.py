@@ -30,7 +30,7 @@ def manage_users():
             User.create_user(user_id, password, role, name, semester)
             flash("User created successfully", "success")
             
-    users = list(mongo.db.users.find())
+    users = list(mongo.db.users.find().sort("user_id", 1))
     return render_template('admin/users.html', users=users)
 
 @admin_bp.route('/courses', methods=['GET', 'POST'])
@@ -52,8 +52,8 @@ def manage_courses():
         flash("Course added successfully", "success")
         
     courses = Course.get_all()
-    students = list(mongo.db.users.find({"role": "student"}))
-    instructors = list(mongo.db.users.find({"role": "instructor"}))
+    students = list(mongo.db.users.find({"role": "student"}).sort("user_id", 1))
+    instructors = list(mongo.db.users.find({"role": "instructor"}).sort("user_id", 1))
     return render_template('admin/courses.html', courses=courses, students=students, instructors=instructors)
 
 @admin_bp.route('/logs')
