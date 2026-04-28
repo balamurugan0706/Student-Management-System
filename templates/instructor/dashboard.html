@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Instructor Dashboard | EduStream{% endblock %}
+{% block header %}Academic Management{% endblock %}
+
+{% block content %}
+<style>
+    .tabs-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-dim);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .search-container {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .search-container input {
+        width: 100%;
+        padding: 14px 20px 14px 45px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .search-container input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .search-container i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-dim);
+    }
+
+    .students-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .student-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .student-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .student-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .student-card:hover::before {
+        opacity: 1;
+    }
+
+    .student-card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .student-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .student-info h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+        color: white;
+    }
+
+    .student-info .roll-no {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+
+    .student-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .detail-item {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+    }
+
+    .detail-item label {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-item span {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .detail-item.grade-a { color: var(--success); }
+    .detail-item.grade-b { color: var(--primary); }
+    .detail-item.grade-c { color: var(--accent); }
+    .detail-item.grade-f { color: var(--error); }
+
+    .card-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .manage-btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .manage-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .no-students {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-dim);
+    }
+
+    .course-badge {
+        display: inline-block;
+        padding: 0.3rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .course-badge.web-dev {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+    }
+
+    .course-badge.mongodb {
+        background: rgba(251, 146, 60, 0.15);
+        color: #fb923c;
+    }
+
+    .course-badge.default {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--primary);
+    }
+</style>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.1s;">
+        <i class="fas fa-graduation-cap" style="color: var(--primary-color);"></i>
+        <h3>Avg. Class GPA</h3>
+        <p class="stat-value text-gradient">{{ analytics.avg_gpa }}</p>
+        <p style="font-size: 0.75rem; color: var(--text-dim);">Academic Standing</p>
+    </div>
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.2s;">
+        <i class="fas fa-percentage" style="color: var(--success);"></i>
+        <h3>Pass Rate</h3>
+        <p class="stat-value text-gradient">{{ analytics.pass_rate }}%</p>
+        <p style="font-size: 0.75rem; color: var(--text-dim);">Final Exams Ready</p>
+    </div>
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.3s;">
+        <i class="fas fa-users" style="color: var(--secondary-color);"></i>
+        <h3>Total Students</h3>
+        <p class="stat-value text-gradient">{{ analytics.total_enrolled }}</p>
+        <p style="font-size: 0.75rem; color: var(--text-dim);">Active Enrollment</p>
+    </div>
+</div>
+
+<!-- Tabs for Course Filter + Upload Button -->
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+    <div class="tabs-container" style="margin-bottom: 0;">
+        <button class="tab-btn active" data-filter="all">
+            <i class="fas fa-list"></i> All
+        </button>
+        {% for course in courses %}
+        <button class="tab-btn" data-filter="{{ course.course_name }}" data-course-id="{{ course.course_id }}">
+            <i class="fas fa-book"></i> {{ course.course_name }}
+        </button>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('instructor_bp.upload_csv') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.5rem; white-space: nowrap;">
+        <i class="fas fa-cloud-upload-alt"></i> Bulk Upload CSV
+    </a>
+</div>
+
+<!-- Search Bar -->
+<div class="search-container">
+    <i class="fas fa-search"></i>
+    <input type="text" id="studentSearch" placeholder="Search by Roll No or Name...">
+</div>
+
+<!-- Student Cards Grid -->
+<div class="students-grid" id="studentsGrid">
+    {% for s in students %}
+    <div class="student-card" data-course="{{ s.course_detail.course_name }}" data-course-id="{{ s.course_id }}" data-name="{{ s.student_detail.name }}" data-roll="{{ s.student_id }}">
+        <div class="student-card-header">
+            <div class="student-avatar">
+                {{ s.student_detail.name[0] }}
+            </div>
+            <div class="student-info">
+                <span class="course-badge {% if 'Web Development' in s.course_detail.course_name %}web-dev{% elif 'MongoDB' in s.course_detail.course_name %}mongodb{% else %}default{% endif %}">
+                    {{ s.course_detail.course_name }}
+                </span>
+                <h3>{{ s.student_detail.name }}</h3>
+                <span class="roll-no">{{ s.student_id }}</span>
+            </div>
+        </div>
+
+        <div class="student-details">
+            <div class="detail-item grade-{{ s.grade[0].lower() if s.grade else 'f' }}">
+                <label>Grade</label>
+                <span>{{ s.grade if s.grade else 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Attendance</label>
+                <span>{{ s.attendance }}%</span>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a href="{{ url_for('instructor_bp.manage_student', student_id=s.student_id, course_id=s.course_id) }}" class="manage-btn">
+                <i class="fas fa-cog"></i> Manage
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-students">
+        <i class="fas fa-user-graduate" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+        <p>No students found in your courses.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // State-based tab filtering
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const studentCards = document.querySelectorAll('.student-card');
+    const searchInput = document.getElementById('studentSearch');
+
+    // State
+    let state = {
+        filter: 'all',
+        search: ''
+    };
+
+    // Course name matching - handles variations in course names
+    function matchesCourse(cardCourse, cardCourseId, filterCourse) {
+        if (filterCourse === 'all') return true;
+
+        const card = cardCourse.toLowerCase().trim();
+        const filter = filterCourse.toLowerCase().trim();
+
+        // Exact match on course name
+        if (card === filter) return true;
+
+        // Partial match - for "Web Development" match "Web Development" or similar
+        if (card.includes(filter) || filter.includes(card)) return true;
+
+        return false;
+    }
+
+    function matchesSearch(name, roll, searchTerm) {
+        if (!searchTerm) return true;
+
+        const search = searchTerm.toLowerCase().trim();
+        return name.toLowerCase().includes(search) || roll.toLowerCase().includes(search);
+    }
+
+    function filterStudents() {
+        studentCards.forEach(card => {
+            const course = card.dataset.course || '';
+            const courseId = card.dataset.courseId || '';
+            const name = card.dataset.name || '';
+            const roll = card.dataset.roll || '';
+
+            const courseMatch = matchesCourse(course, courseId, state.filter);
+            const searchMatch = matchesSearch(name, roll, state.search);
+
+            card.style.display = (courseMatch && searchMatch) ? 'block' : 'none';
+        });
+
+        // Show/hide no-students message
+        const visibleCards = document.querySelectorAll('.student-card[style="display: block"], .student-card:not([style*="display"])');
+        const hasVisibleCards = Array.from(studentCards).some(card =>
+            card.style.display === 'block' || card.style.display === ''
+        );
+
+        const noStudentsMsg = document.querySelector('.no-students');
+        if (noStudentsMsg) {
+            noStudentsMsg.style.display = hasVisibleCards ? 'none' : 'block';
+        }
+    }
+
+    // Tab click handler
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update state
+            state.filter = btn.dataset.filter;
+
+            // Update UI
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Apply filter
+            filterStudents();
+        });
+    });
+
+    // Search input handler
+    searchInput.addEventListener('input', (e) => {
+        state.search = e.target.value;
+        filterStudents();
+    });
+
+    // Initialize - show all students on page load
+    filterStudents();
+</script>
+{% endblock %}

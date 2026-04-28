@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | EduStream{% endblock %}
+{% block header %}Academic Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card glass animate-fade-in" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));">
+        <h3>Current GPA</h3>
+        <div class="value" style="color: #fff;">{{ gpa }}</div>
+        <div style="font-size: 0.875rem; color: var(--text-dim);">Academic Standing</div>
+    </div>
+    
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.1s;">
+        <h3>Current Semester</h3>
+        <div class="value">{{ semester }}</div>
+    </div>
+
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.2s;">
+        <h3>Attendance</h3>
+        <div class="value" style="color: var(--success);">{{ attendance }}%</div>
+        <div style="font-size: 0.875rem; color: var(--text-dim);">Overall Track</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Course Performance -->
+    <div class="glass animate-fade-in" style="padding: 2rem; animation-delay: 0.3s;">
+        <h2 style="margin-bottom: 1.5rem;">Academic Records</h2>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);">
+                    <th style="padding: 1rem;">Course</th>
+                    <th style="padding: 1rem;">Credits</th>
+                    <th style="padding: 1rem;">Grade</th>
+                    <th style="padding: 1rem;">Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in grades %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 1rem;">
+                        <strong>{{ item.course_detail.course_name }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ item.course_id }}</div>
+                    </td>
+                    <td style="padding: 1rem;">{{ item.course_detail.credits }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 4px 10px; border-radius: 20px; background: rgba(34, 197, 94, 0.1); color: var(--success); font-weight: 600;">{{ item.grade }}</span>
+                    </td>
+                    <td style="padding: 1rem;">{{ item.attendance }}%</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center; color: var(--text-dim);">No academic records found yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Quick Support -->
+    <div class="glass animate-fade-in" style="padding: 2rem; animation-delay: 0.4s; height: fit-content;">
+        <h2 style="margin-bottom: 1.5rem;">Need Help?</h2>
+        <form action="{{ url_for('student_bp.submit_query') }}" method="POST">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Subject</label>
+                <select name="subject" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(30, 41, 59, 1); border: 1px solid rgba(255, 255, 255, 0.1); color: white; outline: none;">
+                    <option>Grade Clarification</option>
+                    <option>Attendance Correction</option>
+                    <option>Technical Issue</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Message</label>
+                <textarea name="message" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;"></textarea>
+            </div>
+            <button type="submit" class="btn glass" style="width: 100%; justify-content: center; background: rgba(236, 72, 153, 0.1); color: var(--accent-color);">
+                Submit Query
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

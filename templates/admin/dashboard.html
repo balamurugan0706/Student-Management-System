@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | EduStream{% endblock %}
+{% block header %}System Overview{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.1s;">
+        <h3>Total Students</h3>
+        <div class="value">{{ stats.students }}</div>
+        <div style="margin-top: 10px; font-size: 0.75rem; color: var(--success);"><i class="fas fa-arrow-up"></i> 12% increase</div>
+    </div>
+    
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.2s;">
+        <h3>Active Courses</h3>
+        <div class="value">{{ stats.courses }}</div>
+    </div>
+    
+    <div class="stat-card glass animate-fade-in" style="animation-delay: 0.3s;">
+        <h3>Total Instructors</h3>
+        <div class="value">{{ stats.instructors }}</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <div class="glass animate-fade-in" style="padding: 2rem; animation-delay: 0.4s;">
+        <h2 style="margin-bottom: 1.5rem;">Quick Actions</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+            <a href="{{ url_for('admin_bp.manage_users') }}" class="btn glass" style="flex-direction: column; padding: 2rem; gap: 15px;">
+                <i class="fas fa-user-plus" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                <span>Add User</span>
+            </a>
+            <a href="{{ url_for('admin_bp.manage_courses') }}" class="btn glass" style="flex-direction: column; padding: 2rem; gap: 15px;">
+                <i class="fas fa-plus-circle" style="font-size: 1.5rem; color: var(--secondary-color);"></i>
+                <span>Add Course</span>
+            </a>
+            <a href="{{ url_for('admin_bp.view_logs') }}" class="btn glass" style="flex-direction: column; padding: 2rem; gap: 15px;">
+                <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                <span>Audit Logs</span>
+            </a>
+            <a href="{{ url_for('admin_bp.manage_support') }}" class="btn glass" style="flex-direction: column; padding: 2rem; gap: 15px;">
+                <i class="fas fa-headset" style="font-size: 1.5rem; color: var(--success);"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="glass animate-fade-in" style="padding: 2rem; animation-delay: 0.5s;">
+        <h2 style="margin-bottom: 1.5rem;">Recent Logs</h2>
+        <ul style="list-style: none;">
+            <!-- This would normally be populated with actual data -->
+            <li style="margin-bottom: 1rem; font-size: 0.875rem;">
+                <span style="color: var(--text-dim);">10:45 AM</span> - Admin created user <strong>S101</strong>
+            </li>
+            <li style="margin-bottom: 1rem; font-size: 0.875rem;">
+                <span style="color: var(--text-dim);">10:30 AM</span> - Failed login attempt: <strong>I501</strong>
+            </li>
+        </ul>
+        <a href="{{ url_for('admin_bp.view_logs') }}" style="color: var(--primary-color); text-decoration: none; font-size: 0.875rem;">View all activity</a>
+    </div>
+</div>
+{% endblock %}

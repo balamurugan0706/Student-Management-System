@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Student | EduStream{% endblock %}
+{% block header %}Academic Management - {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="glass animate-fade-in" style="max-width: 600px; margin: 0 auto; padding: 3rem;">
+    <div style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Update Academic Records</h2>
+        <p style="color: var(--text-dim);">Course: <strong>{{ course.course_name }} ({{ course.course_id }})</strong></p>
+    </div>
+    
+    <form action="{{ url_for('instructor_bp.manage_student', student_id=student.user_id, course_id=course.course_id) }}" method="POST">
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Grade</label>
+            <select name="grade" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(30,41,59,1); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+                {% for g in ['O','A+', 'A', 'B+', 'B', 'C', 'D'] %}
+                <option value="{{ g }}" {% if g == grade %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Attendance (%)</label>
+            <input type="number" name="attendance" value="{{ attendance }}" step="0.01" min="0" max="100" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                Save Records
+            </button>
+            <a href="{{ url_for('instructor_bp.dashboard') }}" class="btn glass" style="flex: 1; justify-content: center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

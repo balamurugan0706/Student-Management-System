@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User | EduStream{% endblock %}
+{% block header %}Edit Profile - {{ user.user_id }}{% endblock %}
+
+{% block content %}
+<div class="glass animate-fade-in" style="max-width: 600px; margin: 0 auto; padding: 3rem;">
+    <h2 style="margin-bottom: 2rem;">Update User Information</h2>
+    
+    <form action="{{ url_for('admin_bp.edit_user', user_id=user.user_id) }}" method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; margin-bottom: 2rem;">
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Full Name</label>
+                <input type="text" name="name" value="{{ user.name }}" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Role</label>
+                <select name="role" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(30,41,59,1); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+                    <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
+                    <option value="instructor" {% if user.role == 'instructor' %}selected{% endif %}>Instructor</option>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Email</label>
+                <input type="email" name="email" value="{{ user.email or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Phone</label>
+                <input type="text" name="phone" value="{{ user.phone or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Department</label>
+                <input type="text" name="department" value="{{ user.department or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Academic Status</label>
+                <input type="text" name="academic_status" value="{{ user.academic_status or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+
+            {% if user.role == 'student' %}
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Application Number</label>
+                <input type="text" name="application_number" value="{{ user.application_number or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Programme</label>
+                <input type="text" name="programme" value="{{ user.programme or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Current Semester</label>
+                <input type="number" name="semester" min="1" max="8" value="{{ user.semester or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Batch Year</label>
+                <input type="text" name="batch_year" value="{{ user.batch_year or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Quota</label>
+                <input type="text" name="quota" value="{{ user.quota or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Admission Type</label>
+                <input type="text" name="admission_type" value="{{ user.admission_type or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Expected Year of Passing</label>
+                <input type="text" name="expected_pass_year" value="{{ user.expected_pass_year or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Section</label>
+                <input type="text" name="section" value="{{ user.section or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            {% elif user.role == 'instructor' %}
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Designation</label>
+                <input type="text" name="designation" value="{{ user.designation or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Employment Type</label>
+                <input type="text" name="employment_type" value="{{ user.employment_type or '' }}" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                Save Changes
+            </button>
+            <a href="{{ url_for('admin_bp.manage_users') }}" class="btn glass" style="flex: 1; justify-content: center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+    <!-- Password Reset Section -->
+    <div class="glass animate-fade-in" style="margin-top: 2rem; padding: 2rem; border: 1px solid rgba(239,68,68,0.25); border-radius: 12px;">
+        <h3 style="margin-bottom: 0.5rem; color: #f87171; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-key"></i> Reset Password
+        </h3>
+        <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 1.5rem;">
+            Set a new password for <strong style="color: white;">{{ user.name or user.user_id }}</strong>. Leave blank to keep the current password.
+        </p>
+        <form action="{{ url_for('admin_bp.reset_user_password', user_id=user.user_id) }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">New Password</label>
+                    <div style="position: relative;">
+                        <input type="password" name="new_password" id="newPassword" required minlength="6"
+                            placeholder="Enter new password"
+                            style="width: 100%; padding: 12px 40px 12px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(239,68,68,0.3); color: white; outline: none; box-sizing: border-box;">
+                        <i class="fas fa-eye" id="toggleNew" onclick="togglePass('newPassword','toggleNew')"
+                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim);"></i>
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Confirm Password</label>
+                    <div style="position: relative;">
+                        <input type="password" name="confirm_password" id="confirmPassword" required minlength="6"
+                            placeholder="Confirm new password"
+                            style="width: 100%; padding: 12px 40px 12px 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(239,68,68,0.3); color: white; outline: none; box-sizing: border-box;">
+                        <i class="fas fa-eye" id="toggleConfirm" onclick="togglePass('confirmPassword','toggleConfirm')"
+                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim);"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="passwordMatchMsg" style="font-size: 0.8rem; margin-top: 0.5rem; min-height: 1.2rem;"></div>
+            <button type="submit" id="resetBtn" class="btn" style="margin-top: 1.2rem; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; padding: 10px 28px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-lock"></i> Update Password
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function togglePass(inputId, iconId) {
+            const inp = document.getElementById(inputId);
+            const ico = document.getElementById(iconId);
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                ico.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                inp.type = 'password';
+                ico.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+        const newP = document.getElementById('newPassword');
+        const conP = document.getElementById('confirmPassword');
+        const msg  = document.getElementById('passwordMatchMsg');
+        const btn  = document.getElementById('resetBtn');
+        function checkMatch() {
+            if (conP.value === '') { msg.textContent = ''; return; }
+            if (newP.value === conP.value) {
+                msg.textContent = 'Passwords match';
+                msg.style.color = '#4ade80';
+                btn.disabled = false;
+            } else {
+                msg.textContent = 'Passwords do not match';
+                msg.style.color = '#f87171';
+                btn.disabled = true;
+            }
+        }
+        newP.addEventListener('input', checkMatch);
+        conP.addEventListener('input', checkMatch);
+    </script>
+
+    {% if user.role == 'instructor' and assigned_data %}
+    <div style="margin-top: 3rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; color: var(--secondary-color);">Assignments Overview</h3>
+        
+        <h4 style="margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-dim);">Courses Taught:</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 2rem;">
+            {% for c in assigned_data.courses %}
+            <div class="glass" style="padding: 8px 15px; border-radius: 20px; font-size: 0.875rem; display: flex; align-items: center; gap: 10px;">
+                <span>{{ c.course_name }} ({{ c.course_id }})</span>
+                <a href="{{ url_for('admin_bp.edit_course', course_id=c.course_id) }}" style="color: var(--primary-color); font-size: 0.75rem;"><i class="fas fa-edit"></i></a>
+            </div>
+            {% else %}
+            <p style="color: var(--text-dim);">No courses assigned.</p>
+            {% endfor %}
+        </div>
+
+        <h4 style="margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-dim);">Assigned Students:</h4>
+        <div style="max-height: 200px; overflow-y: auto;">
+            {% for s in assigned_data.students %}
+            <div class="glass" style="padding: 10px 15px; margin-bottom: 5px; display: flex; justify-content: space-between; border-radius: 8px; align-items: center;">
+                <div>
+                    <span>{{ s.student_detail.name }} ({{ s.student_id }})</span>
+                    <span style="color: var(--primary-color); margin-left: 10px; font-size: 0.875rem;">{{ s.course_id }}</span>
+                </div>
+                <a href="{{ url_for('admin_bp.edit_user', user_id=s.student_id) }}" style="color: var(--primary-color);"><i class="fas fa-edit"></i></a>
+            </div>
+            {% else %}
+            <p style="color: var(--text-dim);">No students assigned yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Audit Logs | EduStream{% endblock %}
+{% block header %}Security Monitoring{% endblock %}
+
+{% block content %}
+<div class="glass animate-fade-in" style="padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Activity History</h2>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" placeholder="Filter by User ID..." style="padding: 8px 15px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            <button class="btn btn-primary" style="padding: 8px 15px;"><i class="fas fa-filter"></i></button>
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);">
+                <th style="padding: 1rem;">Timestamp</th>
+                <th style="padding: 1rem;">User ID</th>
+                <th style="padding: 1rem;">Activity</th>
+                <th style="padding: 1rem;">Status</th>
+                <th style="padding: 1rem;">IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 1rem; color: var(--text-dim);">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td style="padding: 1rem;"><strong>{{ log.user_id }}</strong></td>
+                <td style="padding: 1rem;">{{ log.activity }}</td>
+                <td style="padding: 1rem;">
+                    <span style="color: {% if log.status == 'Success' %}var(--success){% else %}var(--error){% endif %};">
+                        {{ log.status }}
+                    </span>
+                </td>
+                <td style="padding: 1rem; font-family: monospace; font-size: 0.875rem;">{{ log.ip }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-dim);">No logs available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

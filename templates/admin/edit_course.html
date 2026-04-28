@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Course | EduStream{% endblock %}
+{% block header %}Edit Course - {{ course.course_id }}{% endblock %}
+
+{% block content %}
+<div class="glass animate-fade-in" style="max-width: 600px; margin: 0 auto; padding: 3rem;">
+    <h2 style="margin-bottom: 2rem;">Update Course details</h2>
+    
+    <form action="{{ url_for('admin_bp.edit_course', course_id=course.course_id) }}" method="POST">
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Course Name</label>
+            <input type="text" name="course_name" value="{{ course.course_name }}" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Credits</label>
+            <input type="number" name="credits" value="{{ course.credits }}" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Assigned Instructor</label>
+            <select name="instructor_id" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(30,41,59,1); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+                <option value="">No Instructor</option>
+                {% for instr in instructors %}
+                <option value="{{ instr.user_id }}" {% if course.instructor_id == instr.user_id %}selected{% endif %}>
+                    {{ instr.name }} ({{ instr.user_id }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                Save Changes
+            </button>
+            <a href="{{ url_for('admin_bp.manage_courses') }}" class="btn glass" style="flex: 1; justify-content: center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

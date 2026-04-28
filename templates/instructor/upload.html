@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Upload CSV | EduStream{% endblock %}
+{% block header %}Bulk Data Upload{% endblock %}
+
+{% block content %}
+<style>
+    .upload-card {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 2.5rem;
+    }
+    .drop-zone {
+        border: 2px dashed rgba(99,102,241,0.4);
+        border-radius: 16px;
+        padding: 3.5rem 2rem;
+        text-align: center;
+        background: rgba(99,102,241,0.04);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+    .drop-zone.drag-over {
+        border-color: var(--primary-color);
+        background: rgba(99,102,241,0.12);
+        transform: scale(1.01);
+    }
+    .drop-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+    .drop-zone-icon { font-size: 3.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+    .drop-zone h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: white; }
+    .drop-zone p  { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+    .file-selected { display: none; margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; color: #4ade80; font-size: 0.9rem; align-items: center; gap: 0.5rem; }
+    .format-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; }
+    .format-box h4 { color: #fbbf24; margin-bottom: 1rem; font-size: 0.95rem; }
+    .csv-preview { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.75rem; }
+    .csv-preview th { background: rgba(99,102,241,0.15); color: var(--primary-color); padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .csv-preview td { padding: 7px 12px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .csv-preview tr:last-child td { border-bottom: none; }
+    .action-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .btn-download { background: rgba(16,185,129,0.15); color: #4ade80; border: 1px solid rgba(16,185,129,0.3); padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.3s; }
+    .btn-download:hover { background: rgba(16,185,129,0.3); }
+    .rules { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+    .rules li { font-size: 0.82rem; color: var(--text-dim); padding: 4px 0; display: flex; align-items: center; gap: 0.5rem; }
+    .rules li i { color: #fbbf24; width: 14px; }
+</style>
+
+<div class="glass animate-fade-in upload-card">
+
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+            <i class="fas fa-file-csv"></i>
+        </div>
+        <div>
+            <h2 style="margin: 0; font-size: 1.4rem;">Bulk Upload CSV</h2>
+            <p style="margin: 0; color: var(--text-dim); font-size: 0.85rem;">Update grades & attendance for multiple students at once</p>
+        </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0;">
+
+    <form action="{{ url_for('instructor_bp.upload_csv') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+            <input type="file" name="csv_file" id="csvFile" accept=".csv" required>
+            <div class="drop-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <h4>Drag & Drop your CSV file here</h4>
+            <p>or <span style="color: var(--primary-color); font-weight: 600;">click to browse</span> &nbsp;·&nbsp; Only .csv files accepted</p>
+        </div>
+
+        <!-- File selected indicator -->
+        <div class="file-selected" id="fileInfo">
+            <i class="fas fa-check-circle"></i>
+            <span id="fileName">No file selected</span>
+            <span style="margin-left: auto; opacity: 0.7;" id="fileSize"></span>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary" id="submitBtn" style="flex: 1; justify-content: center; opacity: 0.5; pointer-events: none;">
+                <i class="fas fa-upload"></i> Process CSV
+            </button>
+            <a href="{{ url_for('instructor_bp.download_sample_csv') }}" class="btn-download">
+                <i class="fas fa-download"></i> Download Sample
+            </a>
+        </div>
+    </form>
+
+    <!-- Format Info -->
+    <div class="format-box">
+        <h4><i class="fas fa-info-circle"></i> &nbsp;Required CSV Format</h4>
+        <table class="csv-preview">
+            <thead>
+                <tr><th>student_id</th><th>course_id</th><th>grade</th><th>attendance</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>S101</td><td>CS101</td><td>A+</td><td>95</td></tr>
+                <tr><td>S102</td><td>CS101</td><td>B+</td><td>88</td></tr>
+                <tr><td>S101</td><td>CS102</td><td>O</td><td>100</td></tr>
+            </tbody>
+        </table>
+        <ul class="rules" style="margin-top: 1.2rem;">
+            <li><i class="fas fa-check"></i> First row must be the header: <code style="background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:4px;">student_id, course_id, grade, attendance</code></li>
+            <li><i class="fas fa-check"></i> Valid grades: O, A+, A, B+, B, C, D, F</li>
+            <li><i class="fas fa-check"></i> Attendance must be a number between 0 and 100</li>
+            <li><i class="fas fa-exclamation-triangle"></i> Records for students not enrolled will be created automatically</li>
+            <li><i class="fas fa-exclamation-triangle"></i> Existing records will be overwritten</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a href="{{ url_for('instructor_bp.dashboard') }}" style="color: var(--text-dim); font-size: 0.85rem; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+    const dropZone  = document.getElementById('dropZone');
+    const csvFile   = document.getElementById('csvFile');
+    const fileInfo  = document.getElementById('fileInfo');
+    const fileName  = document.getElementById('fileName');
+    const fileSize  = document.getElementById('fileSize');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        return (bytes / 1024).toFixed(1) + ' KB';
+    }
+
+    function showFile(file) {
+        if (!file || !file.name.endsWith('.csv')) {
+            fileInfo.style.display = 'none';
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.pointerEvents = 'none';
+            return;
+        }
+        fileName.textContent = file.name;
+        fileSize.textContent = formatBytes(file.size);
+        fileInfo.style.display = 'flex';
+        submitBtn.style.opacity = '1';
+        submitBtn.style.pointerEvents = 'auto';
+    }
+
+    csvFile.addEventListener('change', () => showFile(csvFile.files[0]));
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        csvFile.files = dt.files;
+        showFile(file);
+    });
+</script>
+{% endblock %}

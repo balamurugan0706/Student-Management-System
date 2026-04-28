@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | EduStream{% endblock %}
+{% block header %}Student Profile{% endblock %}
+
+{% block content %}
+<!-- Basic Details Section -->
+<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+    <h2 style="font-size: 1.5rem; margin: 0; display: inline-flex; align-items: center; gap: 10px;">
+        Basic Details
+        <button class="btn" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </h2>
+</div>
+
+<div class="glass animate-fade-in" style="padding: 2.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 3rem;">
+    <!-- Photo Area -->
+    <div style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 20px;">
+        <!-- Generating Avatar using ui-avatars.com to simulate the profile picture -->
+        <img src="https://ui-avatars.com/api/?name={{ user.name }}&background=8b5cf6&color=fff&size=150" alt="Official Photo" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <p style="margin-top: 15px; color: var(--text-dim); font-size: 0.9rem;">Official Photo</p>
+    </div>
+
+    <!-- Details Area -->
+    <div style="flex: 1 1 500px;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 700;">{{ user.name }}</h3>
+        
+        <div style="display: grid; grid-template-columns: minmax(180px, max-content) 1fr; gap: 12px 20px; font-size: 0.95rem;">
+            <!-- Registration ID -->
+            <div style="color: var(--text-dim);">Registration ID</div>
+            <div>{{ user.user_id }}</div>
+            
+            <!-- Application Number -->
+            <div style="color: var(--text-dim);">Application Number</div>
+            <div>{{ user.get('application_number', '-') }}</div>
+            
+            <!-- Email -->
+            <div style="color: var(--text-dim);">Email</div>
+            <div>{{ user.get('email', user.user_id.lower() ~ '@edustream.edu') }}</div>
+            
+            <!-- Phone -->
+            <div style="color: var(--text-dim);">Phone</div>
+            <div>{{ user.get('phone', '-') }}</div>
+            
+            <!-- Programme -->
+            <div style="color: var(--text-dim);">Programme</div>
+            <div>{{ user.get('programme', 'B.Tech. Information Technology') }}</div>
+            
+            <!-- Department -->
+            <div style="color: var(--text-dim);">Department</div>
+            <div>{{ user.get('department', 'Department Of Information Technology') }}</div>
+            
+            <!-- Batch Year -->
+            <div style="color: var(--text-dim);">Batch Year</div>
+            <div>{{ user.get('batch_year', '2024') }}</div>
+            
+            <!-- Academic Status -->
+            <div style="color: var(--text-dim);">Academic Status</div>
+            <div>{{ user.get('academic_status', 'Regular') }}</div>
+            
+            <!-- Current Year -->
+            <div style="color: var(--text-dim);">Current Year</div>
+            {% set sem = user.get('semester', 1) %}
+            <div>{{ ((sem + 1) // 2) }} Year</div>
+            
+            <!-- Current Term -->
+            <div style="color: var(--text-dim);">Current Term</div>
+            <div>{{ sem }} Semester</div>
+            
+            <!-- Quota -->
+            <div style="color: var(--text-dim);">Quota</div>
+            <div>{{ user.get('quota', 'Government Quota') }}</div>
+            
+            <!-- Admission Type -->
+            <div style="color: var(--text-dim);">Admission Type</div>
+            <div>{{ user.get('admission_type', 'Regular') }}</div>
+            
+            <!-- Expected Year of Passing -->
+            <div style="color: var(--text-dim);">Expected Year of Passing</div>
+            <div>{{ user.get('expected_pass_year', '-') }}</div>
+            
+            <!-- Expected Date of Passing -->
+            <div style="color: var(--text-dim);">Expected Date of Passing</div>
+            <div>{{ user.get('expected_pass_date', '-') }}</div>
+            
+            <!-- Section -->
+            <div style="color: var(--text-dim);">Section</div>
+            <div>{{ user.get('section', 'B.Tech. Information Technology-2024-Default') }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Security Management -->
+<div class="glass animate-fade-in" style="padding: 2.5rem; animation-delay: 0.2s; max-width: 600px;">
+    <h3 style="margin-bottom: 2rem; font-size: 1.25rem;"><i class="fas fa-key" style="margin-right: 10px; color: var(--accent);"></i> Change Your Password</h3>
+    
+    <form action="{{ url_for('student_bp.change_password') }}" method="POST">
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">New Password</label>
+            <input type="password" name="new_password" required placeholder="••••••••" style="width: 100%; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Confirm New Password</label>
+            <input type="password" name="confirm_password" required placeholder="••••••••" style="width: 100%; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Update Password Securely
+        </button>
+    </form>
+</div>
+{% endblock %}

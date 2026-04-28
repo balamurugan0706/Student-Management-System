@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users | EduStream{% endblock %}
+{% block header %}User Directory{% endblock %}
+
+{% block content %}
+{% include "components/delete_modal.html" %}
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <!-- Add User Form -->
+    <div class="glass animate-fade-in" style="padding: 2rem; height: fit-content;">
+        <h2 style="margin-bottom: 1.5rem;">Register New User</h2>
+        <form action="{{ url_for('admin_bp.manage_users') }}" method="POST">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">User ID / Roll No</label>
+                <input type="text" name="user_id" required style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Full Name</label>
+                <input type="text" name="name" required style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Role</label>
+                <select name="role" id="roleSelect" onchange="toggleSemester()" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(30,41,59,1); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+                    <option value="student">Student</option>
+                    <option value="instructor">Instructor</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;" id="semesterField">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Semester</label>
+                <input type="number" name="semester" min="1" max="8" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.875rem;">Password</label>
+                <input type="password" name="password" required style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+    </div>
+
+    <!-- User List -->
+    <div class="glass animate-fade-in" style="padding: 2rem; animation-delay: 0.2s;">
+        <h2 style="margin-bottom: 1.5rem;">Existing Accounts</h2>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);">
+                    <th style="padding: 1rem;">User ID</th>
+                    <th style="padding: 1rem;">Name</th>
+                    <th style="padding: 1rem;">Role</th>
+                    <th style="padding: 1rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 1rem;">{{ user.user_id }}</td>
+                    <td style="padding: 1rem;">{{ user.name }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; 
+                            background: {% if user.role == 'admin' %}rgba(236, 72, 153, 0.1){% elif user.role == 'instructor' %}rgba(168, 85, 247, 0.1){% else %}rgba(99, 102, 241, 0.1){% endif %};
+                            color: {% if user.role == 'admin' %}var(--accent-color){% elif user.role == 'instructor' %}var(--secondary-color){% else %}var(--primary-color){% endif %};">
+                            {{ user.role | capitalize }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; display: flex; gap: 5px;">
+                        <a href="{{ url_for('admin_bp.edit_user', user_id=user.user_id) }}" class="btn" style="padding: 5px 10px; background: rgba(255,255,255,0.05); color: var(--text-dim);"><i class="fas fa-edit"></i></a>
+                        <button type="button" class="btn delete-btn" style="padding: 5px 10px; background: rgba(239, 68, 68, 0.1); color: var(--error); border: none; cursor: pointer;" data-user-id="{{ user.user_id }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleSemester() {
+        var role = document.getElementById('roleSelect').value;
+        var semField = document.getElementById('semesterField');
+        if (role === 'student') {
+            semField.style.display = 'block';
+        } else {
+            semField.style.display = 'none';
+        }
+    }
+    // Initialize state on load
+    toggleSemester();
+
+    // Attach click handlers to delete buttons
+    document.querySelectorAll('.delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var userId = this.getAttribute('data-user-id');
+            var deleteUrl = '/admin/users/delete/' + encodeURIComponent(userId);
+            var rowElement = this.closest('tr');
+            openDeleteModal(deleteUrl, rowElement);
+        });
+    });
+</script>
+{% endblock %}

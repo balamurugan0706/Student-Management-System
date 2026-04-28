@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="toast-container">
+          {% for category, message in messages %}
+            <div class="toast {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Background Elements -->
+    <div class="bg-animation"></div>
+    <div class="blob" style="top: -100px; right: -100px;"></div>
+    <div class="blob" style="bottom: -100px; left: -100px; animation-delay: -5s;"></div>
+
+    <div class="app-container">
+        {% if session.get('user_id') %}
+        <nav class="sidebar glass">
+            <div class="logo" style="margin-bottom: 3rem; font-size: 1.5rem; font-weight: 800; color: var(--primary);">
+                <i class="fas fa-graduation-cap"></i> EduStream
+            </div>
+            
+            <ul style="list-style: none;">
+                <li style="margin-bottom: 1rem;">
+                    <a href="/" class="btn" style="width: 100%; justify-content: flex-start; background: rgba(255,255,255,0.05);">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </a>
+                </li>
+                
+                {% if session.role == 'admin' %}
+                <li style="margin-bottom: 1rem;">
+                    <a href="{{ url_for('admin_bp.manage_users') }}" class="btn" style="width: 100%; justify-content: flex-start;">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li style="margin-bottom: 1rem;">
+                    <a href="{{ url_for('admin_bp.manage_courses') }}" class="btn" style="width: 100%; justify-content: flex-start;">
+                        <i class="fas fa-book"></i> Courses
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if session.role == 'student' %}
+                <li style="margin-bottom: 1rem;">
+                    <a href="{{ url_for('student_bp.profile') }}" class="btn" style="width: 100%; justify-content: flex-start;">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if session.role == 'instructor' %}
+                <li style="margin-bottom: 1rem;">
+                    <a href="{{ url_for('instructor_bp.profile') }}" class="btn" style="width: 100%; justify-content: flex-start;">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li style="margin-bottom: 1rem;">
+                    <a href="{{ url_for('instructor_bp.upload_csv') }}" class="btn" style="width: 100%; justify-content: flex-start;">
+                        <i class="fas fa-file-upload"></i> Upload CSV
+                    </a>
+                </li>
+                {% endif %}
+                
+                <li style="margin-top: auto; padding-top: 2rem;">
+                    <a href="{{ url_for('auth_bp.logout') }}" class="btn" style="width: 100%; justify-content: flex-start; color: var(--error);">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>{% block header %}{% endblock %}</h1>
+                <div class="user-profile glass" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 10px;">
+                    <span style="color: var(--text-dim);">{{ session.role | capitalize }}</span>
+                    <strong>{{ session.name }}</strong>
+                </div>
+            </header>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Remove toasts after 5 seconds
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(t => t.style.display = 'none');
+        }, 5000);
+    </script>
+</body>
+</html>

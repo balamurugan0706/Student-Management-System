@@ -1,0 +1,81 @@
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-delete">
+        <div class="modal-delete-header">
+            <div class="modal-delete-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="modal-delete-title">Delete User</h3>
+                <p class="modal-delete-subtitle">This action cannot be undone</p>
+            </div>
+        </div>
+        <div class="modal-delete-body">
+            <p class="modal-delete-text">Are you sure you want to delete this user? All their data will be permanently removed from the system.</p>
+        </div>
+        <div class="modal-delete-actions">
+            <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-delete" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDeleteModal(deleteUrl, rowElement = null) {
+    const modal = document.getElementById('deleteModal');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    confirmBtn.onclick = function() {
+        // Change button text to show loading state
+        var originalText = confirmBtn.innerText;
+        confirmBtn.innerText = "Deleting...";
+        
+        // Asynchronous POST to delete
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => {
+            if(response.ok || response.redirected) {
+                closeDeleteModal();
+                if(rowElement) {
+                    // Smoothly fade out and remove the element
+                    rowElement.style.transition = 'opacity 0.3s ease';
+                    rowElement.style.opacity = '0';
+                    setTimeout(() => rowElement.remove(), 300);
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                alert("Failed to delete user.");
+                confirmBtn.innerText = originalText;
+            }
+        }).catch(err => {
+            alert("Error: " + err);
+            confirmBtn.innerText = originalText;
+        });
+    };
+
+    modal.classList.add('active');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+}
+
+// Close modal on overlay click
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+    }
+});
+</script>

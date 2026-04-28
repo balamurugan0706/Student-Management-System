@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Support Queries | EduStream{% endblock %}
+{% block header %}Query Resolver{% endblock %}
+
+{% block content %}
+<div class="glass animate-fade-in" style="padding: 2rem;">
+    <h2 style="margin-bottom: 2rem;">Student Queries</h2>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);">
+                <th style="padding: 1rem;">Student</th>
+                <th style="padding: 1rem;">Subject</th>
+                <th style="padding: 1rem;">Message</th>
+                <th style="padding: 1rem;">Status</th>
+                <th style="padding: 1rem;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for query in queries %}
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 1rem;"><strong>{{ query.student_id }}</strong></td>
+                <td style="padding: 1rem;">{{ query.subject }}</td>
+                <td style="padding: 1rem; font-size: 0.875rem; color: var(--text-dim);">{{ query.message }}</td>
+                <td style="padding: 1rem;">
+                    <span style="padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; 
+                        background: {% if query.status == 'Resolved' %}rgba(34, 197, 94, 0.1){% else %}rgba(239, 68, 68, 0.1){% endif %};
+                        color: {% if query.status == 'Resolved' %}var(--success){% else %}var(--error){% endif %};">
+                        {{ query.status }}
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    {% if query.status == 'Pending' %}
+                    <form action="{{ url_for('admin_bp.resolve_query', query_id=query._id) }}" method="POST">
+                        <button type="submit" class="btn glass" style="padding: 5px 10px; font-size: 0.75rem;"><i class="fas fa-check"></i> Resolve</button>
+                    </form>
+                    {% else %}
+                    <span style="color: var(--text-dim); font-size: 0.75rem;">Completed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-dim);">No active support queries.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
