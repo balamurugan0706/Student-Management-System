@@ -267,6 +267,27 @@ input:focus, select:focus {
     outline: none;
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 8px;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: var(--primary);
+}
+
 /* Toasts */
 #toast-container {
     position: fixed;
@@ -423,6 +444,76 @@ input:focus, select:focus {
     box-shadow: 0 8px 25px rgba(248, 113, 113, 0.5);
 }
 
+.responsive-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 992px) {
+    .responsive-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .btn-delete:active {
     transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 280px;
+        box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    }
+
+    .sidebar.mobile-active {
+        left: 0;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .user-profile span {
+        display: none;
+    }
+
+    #menu-toggle {
+        display: flex !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .glass {
+        padding: 1rem !important;
+    }
 }

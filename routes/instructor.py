@@ -95,8 +95,8 @@ def upload_csv():
 
         df = pd.read_csv(io.StringIO(text))
 
-        # Normalize column names: strip spaces, lowercase
-        df.columns = [c.strip().lower().replace(' ', '_') for c in df.columns]
+        # Normalize column names: strip spaces, lowercase, and handle common misspellings
+        df.columns = [c.strip().lower().replace(' ', '_').replace('attendence', 'attendance') for c in df.columns]
 
         required_cols = {'student_id', 'course_id', 'grade', 'attendance'}
         missing = required_cols - set(df.columns)

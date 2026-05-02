@@ -141,14 +141,37 @@ def edit_user(user_id):
 def edit_course(course_id):
     course = mongo.db.courses.find_one({"course_id": course_id})
     if request.method == 'POST':
+        new_id = request.form.get('new_course_id')
         name = request.form.get('course_name')
         credits = request.form.get('credits')
         instructor = request.form.get('instructor_id')
-        mongo.db.courses.update_one(
-            {"course_id": course_id},
-            {"$set": {"course_name": name, "credits": credits, "instructor_id": instructor}}
-        )
-        flash("Course updated successfully", "success")
+
+        # Check if Course ID is being changed
+        if new_id != course_id:
+            # Check if the new ID already exists
+            if mongo.db.courses.find_one({"course_id": new_id}):
+                flash("Error: New Course ID already exists.", "error")
+                return redirect(url_for('admin_bp.edit_course', course_id=course_id))
+            
+            # Update the course document (including the ID)
+            mongo.db.courses.update_one(
+                {"course_id": course_id},
+                {"$set": {"course_id": new_id, "course_name": name, "credits": credits, "instructor_id": instructor}}
+            )
+            
+            # Propagate change to grades and attendance collections
+            mongo.db.grades.update_many({"course_id": course_id}, {"$set": {"course_id": new_id}})
+            mongo.db.attendance.update_many({"course_id": course_id}, {"$set": {"course_id": new_id}})
+            
+            flash(f"Course ID changed from {course_id} to {new_id} and records updated.", "success")
+        else:
+            # Just a normal update
+            mongo.db.courses.update_one(
+                {"course_id": course_id},
+                {"$set": {"course_name": name, "credits": credits, "instructor_id": instructor}}
+            )
+            flash("Course updated successfully", "success")
+            
         return redirect(url_for('admin_bp.manage_courses'))
         
     instructors = list(mongo.db.users.find({"role": "instructor"}))

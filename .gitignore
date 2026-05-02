@@ -26,3 +26,5 @@ Thumbs.db
 # Scratch / temp files
 scratch/
 data/
+new_data_db/
+*.lock

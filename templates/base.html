@@ -97,7 +97,12 @@
 
         <main class="main-content">
             <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h1>{% block header %}{% endblock %}</h1>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div id="menu-toggle" style="display: none; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main);">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <h1>{% block header %}{% endblock %}</h1>
+                </div>
                 <div class="user-profile glass" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 10px;">
                     <span style="color: var(--text-dim);">{{ session.role | capitalize }}</span>
                     <strong>{{ session.name }}</strong>
@@ -137,6 +142,31 @@
                 setTimeout(() => t.remove(), 500);
             });
         }, 5000);
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('mobile-active');
+            });
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('mobile-active') && !sidebar.contains(e.target) && e.target !== menuToggle) {
+                    sidebar.classList.remove('mobile-active');
+                }
+            });
+            
+            // Close sidebar when clicking on a nav link on mobile
+            document.querySelectorAll('.sidebar .btn').forEach(link => {
+                link.addEventListener('click', () => {
+                    sidebar.classList.remove('mobile-active');
+                });
+            });
+        }
     </script>
 </body>
 </html>

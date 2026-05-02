@@ -15,7 +15,7 @@ with app.app_context():
         print("No courses found. Please add courses first.")
         exit()
 
-    grades_list = ["O", "A+", "A", "B+", "B", "C", "P", "F"]
+    grades_list = ["O", "A+", "A", "B+", "B", "C", "D", "F"]
     
     total_assignments = 0
     for student in students:

@@ -39,9 +39,9 @@ A robust, role-based academic management platform built with Python (Flask) and 
 
 ## Default Credentials
 
-- **Admin**: `admin` / `admin123`
-- **Instructor**: `I501` / `pass123`
-- **Student**: `S101` / `pass123`
+- **Admin**: `admin` / `Admin@SDMS#2026`
+- **Instructor**: `I501` / `Instr@SDMS#2026`
+- **Student**: `S101` / `Stud@SDMS#2026`
 
 ## API & Schema Documentation
 
